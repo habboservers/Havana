@@ -13,7 +13,7 @@ public class WebSettingsConfigWriter implements ConfigWriter {
         Map<String, String> config = new HashMap<>();
         config.put("site.name", "Habbo");
         config.put("site.path", "http://localhost");
-        config.put("static.content.path", "http://localhost");
+        config.put("static.content.path", "https://cdn.habboservers.com/havana");
         config.put("site.imaging.endpoint", "http://localhost:5000");
         config.put("site.imaging.endpoint.timeout", "30000");
 
@@ -25,14 +25,14 @@ public class WebSettingsConfigWriter implements ConfigWriter {
         config.put("loader.mus.ip", "127.0.0.1");
         config.put("loader.mus.port", "12322");
 
-        config.put("loader.dcr", "http://localhost/dcr/v31/habbo.dcr?");
-        config.put("loader.external.variables", "http://localhost/dcr/v31/gamedata/external_variables.txt?");
-        config.put("loader.external.texts", "http://localhost/dcr/v31/gamedata/external_texts.txt?");
+        config.put("loader.dcr", "https://cdn.habboservers.com/havana/dcr/v31/habbo.dcr?");
+        config.put("loader.external.variables", "https://cdn.habboservers.com/havana/dcr/v31/gamedata/external_variables.txt?");
+        config.put("loader.external.texts", "https://cdn.habboservers.com/havana/dcr/v31/gamedata/external_texts.txt?");
 
-        config.put("loader.flash.base", "http://localhost/gordon/RELEASE39-22643-22891-200911110035_07c3a2a30713fd5bea8a8caf07e33438/");
-        config.put("loader.flash.swf", "http://localhost/gordon/RELEASE39-22643-22891-200911110035_07c3a2a30713fd5bea8a8caf07e33438/Habbo.swf");
-        config.put("loader.flash.external.texts", "http://localhost/flash/gamedata/external_flash_texts.txt");
-        config.put("loader.flash.external.variables", "http://localhost/flash/gamedata/external_variables.txt");
+        config.put("loader.flash.base", "https://cdn.habboservers.com/havana/gordon/RELEASE39-22643-22891-200911110035_07c3a2a30713fd5bea8a8caf07e33438/");
+        config.put("loader.flash.swf", "https://cdn.habboservers.com/havana/gordon/RELEASE39-22643-22891-200911110035_07c3a2a30713fd5bea8a8caf07e33438/Habbo.swf");
+        config.put("loader.flash.external.texts", "https://cdn.habboservers.com/havana/flash/gamedata/external_flash_texts.txt");
+        config.put("loader.flash.external.variables", "https://cdn.habboservers.com/havana/flash/gamedata/external_variables.txt");
 
 
         config.put("registration.disabled", "false");
@@ -77,7 +77,7 @@ public class WebSettingsConfigWriter implements ConfigWriter {
 
         config.put("trade.email.verification", "false");
         config.put("email.smtp.enable", "false");
-        config.put("email.static.content.path", "http://localhost");
+        config.put("email.static.content.path", "https://cdn.habboservers.com/havana");
 
         config.put("email.smtp.host", "");
         config.put("email.smtp.port", "465");
