@@ -22,7 +22,7 @@ java {
 dependencies {
     // https://mvnrepository.com/artifact/io.pebbletemplates/pebble
     // Note: Pebble 4.x has breaking API changes. Using 3.2.2 for compatibility.
-    implementation group: 'io.pebbletemplates', name: 'pebble', version: '3.2.2'
+    implementation group: 'io.pebbletemplates', name: 'pebble', version: '4.1.0'
 
     // https://mvnrepository.com/artifact/com.zaxxer/HikariCP
     // Note: HikariCP 6+ requires Java 21. Using 5.1.0 for Java 17 compatibility.
