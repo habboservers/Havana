@@ -1,5 +1,5 @@
 # Build stage
-FROM eclipse-temurin:17.0.13_11-jdk-alpine AS builder
+FROM eclipse-temurin:24.0.2_12-jdk-alpine AS builder
 
 WORKDIR /sources
 COPY ./gradle /sources/gradle
@@ -11,7 +11,7 @@ COPY ./settings.gradle /sources
 RUN chmod +x ./gradlew && ./gradlew :Havana-Web:shadowJar --no-daemon
 
 # Runtime stage
-FROM eclipse-temurin:17.0.13_11-jre-alpine
+FROM eclipse-temurin:24.0.2_12-jre-alpine
 
 # Install dumb-init for proper signal handling and netcat for health checks
 RUN apk add --no-cache dumb-init
