@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jdk AS builder
+FROM eclipse-temurin:25-jdk AS builder
 
 WORKDIR /sources
 COPY ./gradle /sources/gradle
@@ -9,7 +9,7 @@ COPY ./settings.gradle /sources
 
 RUN ./gradlew :Havana-Web:shadowJar
 
-FROM eclipse-temurin:17-jre
+FROM eclipse-temurin:25-jre
 WORKDIR /havana-web
 
 # Copy the JAR file from build
