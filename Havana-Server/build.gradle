@@ -54,7 +54,7 @@ dependencies {
     implementation group: 'com.google.code.gson', name: 'gson', version: '2.11.0'
 
     // https://mvnrepository.com/artifact/org.springframework.security/spring-security-crypto
-    implementation group: 'org.springframework.security', name: 'spring-security-crypto', version: '6.4.2'
+    implementation group: 'org.springframework.security', name: 'spring-security-crypto', version: '7.0.2'
 
     // https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk18on
     implementation group: 'org.bouncycastle', name: 'bcprov-jdk18on', version: '1.79'
