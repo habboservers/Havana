@@ -39,7 +39,7 @@ dependencies {
     implementation group: 'commons-validator', name: 'commons-validator', version: '1.6'
 
     // https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient
-    implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5'
+    implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.14'
 
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12
     implementation group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.25'
