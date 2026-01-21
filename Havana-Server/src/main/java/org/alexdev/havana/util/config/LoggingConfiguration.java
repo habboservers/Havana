@@ -1,6 +1,6 @@
 package org.alexdev.havana.util.config;
 
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.logging.log4j.core.config.Configurator;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,42 +14,56 @@ public class LoggingConfiguration {
      * @throws FileNotFoundException the exception if an error happens
      */
     public static void checkLoggingConfig() throws FileNotFoundException {
-        String output = "log4j.rootLogger=INFO, stdout, SERVER_LOG\n" +
-                "log4j.appender.stdout.threshold=info\n" +
-                "log4j.appender.stdout=org.apache.log4j.ConsoleAppender\n" +
-                "log4j.appender.stdout.Target=System.out\n" +
-                "log4j.appender.stdout.layout=org.apache.log4j.PatternLayout\n" +
-                "log4j.appender.stdout.layout.ConversionPattern=%d{yyyy-MM-dd'T'HH:mm:ss.SSS} %-5p [%c] - %m%n\n" +
-                "\n" +
-                "# Create new logger information for error\n" +
-                "log4j.logger.ErrorLogger=ERROR, error, ERROR_FILE\n" +
-                "log4j.additivity.ErrorLogger=false\n" +
-                "\n" +
-                "# Set settings for the error logger\n" +
-                "log4j.appender.error=org.apache.log4j.ConsoleAppender\n" +
-                "log4j.appender.error.Target=System.err\n" +
-                "log4j.appender.error.layout=org.apache.log4j.PatternLayout\n" +
-                "log4j.appender.error.layout.ConversionPattern=%d{yyyy-MM-dd'T'HH:mm:ss.SSS} %-5p [%c] - %m%n\n" +
-                "\n" +
-                "# Define the file appender for errors\n" +
-                "log4j.appender.ERROR_FILE=org.apache.log4j.FileAppender\n" +
-                "log4j.appender.ERROR_FILE.File=error.log\n" +
-                "log4j.appender.ERROR_FILE.ImmediateFlush=true\n" +
-                "log4j.appender.ERROR_FILE.Threshold=debug\n" +
-                "log4j.appender.ERROR_FILE.Append=true\n" +
-                "log4j.appender.ERROR_FILE.layout=org.apache.log4j.PatternLayout\n" +
-                "log4j.appender.ERROR_FILE.layout.conversionPattern=%d{yyyy-MM-dd'T'HH:mm:ss.SSS} - [%c] - %m%n\n" +
-                "\n" +
-                "# Define the file appender for server output\n" +
-                "log4j.appender.SERVER_LOG=org.apache.log4j.FileAppender\n" +
-                "log4j.appender.SERVER_LOG.File=server.log\n" +
-                "log4j.appender.SERVER_LOG.ImmediateFlush=true\n" +
-                "log4j.appender.SERVER_LOG.Threshold=debug\n" +
-                "log4j.appender.SERVER_LOG.Append=true\n" +
-                "log4j.appender.SERVER_LOG.layout=org.apache.log4j.PatternLayout\n" +
-                "log4j.appender.SERVER_LOG.layout.conversionPattern=%d{yyyy-MM-dd'T'HH:mm:ss.SSS} - [%c] - %m%n\n";
+        String output = """
+                status = error
+                name = HavanaServerConfig
 
-        File loggingConfig = new File("log4j.properties");
+                # Console appender
+                appender.console.type = Console
+                appender.console.name = stdout
+                appender.console.target = SYSTEM_OUT
+                appender.console.layout.type = PatternLayout
+                appender.console.layout.pattern = %d{yyyy-MM-dd'T'HH:mm:ss.SSS} %-5p [%c] - %m%n
+
+                # Error console appender
+                appender.error.type = Console
+                appender.error.name = stderr
+                appender.error.target = SYSTEM_ERR
+                appender.error.layout.type = PatternLayout
+                appender.error.layout.pattern = %d{yyyy-MM-dd'T'HH:mm:ss.SSS} %-5p [%c] - %m%n
+
+                # Server log file appender
+                appender.serverlog.type = File
+                appender.serverlog.name = SERVER_LOG
+                appender.serverlog.fileName = server.log
+                appender.serverlog.append = true
+                appender.serverlog.immediateFlush = true
+                appender.serverlog.layout.type = PatternLayout
+                appender.serverlog.layout.pattern = %d{yyyy-MM-dd'T'HH:mm:ss.SSS} - [%c] - %m%n
+
+                # Error log file appender
+                appender.errorfile.type = File
+                appender.errorfile.name = ERROR_FILE
+                appender.errorfile.fileName = error.log
+                appender.errorfile.append = true
+                appender.errorfile.immediateFlush = true
+                appender.errorfile.layout.type = PatternLayout
+                appender.errorfile.layout.pattern = %d{yyyy-MM-dd'T'HH:mm:ss.SSS} - [%c] - %m%n
+
+                # Error logger
+                logger.error.name = ErrorLogger
+                logger.error.level = error
+                logger.error.additivity = false
+                logger.error.appenderRef.stderr.ref = stderr
+                logger.error.appenderRef.errorfile.ref = ERROR_FILE
+
+                # Root logger
+                rootLogger.level = info
+                rootLogger.appenderRef.stdout.ref = stdout
+                rootLogger.appenderRef.serverlog.ref = SERVER_LOG
+                """;
+
+        File loggingConfig = new File("log4j2.properties");
 
         if (!loggingConfig.exists()) {
             PrintWriter writer = new PrintWriter(loggingConfig.getAbsoluteFile());
@@ -58,7 +72,7 @@ public class LoggingConfiguration {
             writer.close();
         }
 
-        //Change the path where the logger property should be read from
-        PropertyConfigurator.configure(loggingConfig.getAbsolutePath());
+        // Configure Log4j 2 with the properties file
+        Configurator.initialize(null, loggingConfig.getAbsolutePath());
     }
 }

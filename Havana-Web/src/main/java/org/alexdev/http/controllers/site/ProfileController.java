@@ -22,7 +22,7 @@ import org.alexdev.http.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 
-import javax.mail.internet.AddressException;
+import jakarta.mail.internet.AddressException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;

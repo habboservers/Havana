@@ -1,0 +1,55 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+
+# Build outputs (we rebuild in Docker)
+**/build/
+**/out/
+**/bin/
+**/*.jar
+
+# Gradle caches (we want fresh builds)
+.gradle/
+
+# Documentation
+*.md
+LICENSE
+docs/
+
+# CI/CD
+.github/
+
+# Local configs and secrets
+.env
+.env.*
+!.env.example
+*.properties
+!gradle.properties
+config.ini
+webserver-config.ini
+game.ini
+server.ini
+locale.ini
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test files
+**/test/
+**/tests/
+
+# Temporary files
+tmp/
+temp/

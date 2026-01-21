@@ -8,8 +8,8 @@ import org.alexdev.http.dao.EmailDao;
 import org.alexdev.http.template.TwigTemplate;
 import org.apache.commons.validator.routines.EmailValidator;
 
-import javax.mail.*;
-import javax.mail.internet.*;
+import jakarta.mail.*;
+import jakarta.mail.internet.*;
 import java.io.IOException;
 import java.util.Properties;
 

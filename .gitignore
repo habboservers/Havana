@@ -22,6 +22,7 @@ locale.ini
 game.ini
 server.ini
 log4j.properties
+log4j2.properties
 
 Kepler-Server-all.jar
 
@@ -29,6 +30,7 @@ server.log
 error.log
 .env
 log4j.web.properties
+log4j2.web.properties
 server.web.log
 error.web.log
 Havana-Server/src/main/java/META-INF/MANIFEST.MF

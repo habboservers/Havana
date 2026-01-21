@@ -1,17 +1,6 @@
-x-mariadb-variables: &mariadb-variables
-  MARIADB_USER: havana
-  MARIADB_PASSWORD: goldfish
-  MARIADB_ROOT_PASSWORD: yourstrongpassword
-  MARIADB_DATABASE: havana
-
-x-havana-variables: &havana-variables
-  MYSQL_USERNAME: havana
-  MYSQL_PASSWORD: goldfish
-  MYSQL_DATABASE: havana
-
 services:
   havana-server:
-    depends_on: 
+    depends_on:
       mariadb:
         condition: service_healthy
     build:
@@ -24,10 +13,15 @@ services:
     networks:
       - havana
     environment:
-      <<: *havana-variables
+      MYSQL_HOST: ${MYSQL_HOST:-mariadb}
+      MYSQL_PORT: ${MYSQL_PORT:-3306}
+      MYSQL_USERNAME: ${MYSQL_USERNAME}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
     restart: on-failure
+
   havana-web:
-    depends_on: 
+    depends_on:
       mariadb:
         condition: service_healthy
     build:
@@ -40,16 +34,24 @@ services:
     volumes:
       - ./tools:/havana-web/bin/tools
     environment:
-      <<: *havana-variables
+      MYSQL_HOST: ${MYSQL_HOST:-mariadb}
+      MYSQL_PORT: ${MYSQL_PORT:-3306}
+      MYSQL_USERNAME: ${MYSQL_USERNAME}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
     restart: on-failure
+
   mariadb:
-    image: "mariadb:latest"
+    image: "mariadb:11.4-noble"
     ports:
       - "3306:3306"
     networks:
       - havana
     environment:
-      <<: *mariadb-variables
+      MARIADB_USER: ${MYSQL_USERNAME}
+      MARIADB_PASSWORD: ${MYSQL_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${MYSQL_DATABASE}
     volumes:
       - data:/var/lib/mysql
       - ./tools/havana.sql:/docker-entrypoint-initdb.d/havana.sql

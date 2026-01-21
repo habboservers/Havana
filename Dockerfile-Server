@@ -1,4 +1,5 @@
-FROM eclipse-temurin:25-jdk AS builder
+# Build stage
+FROM eclipse-temurin:17.0.13_11-jdk-alpine AS builder
 
 WORKDIR /sources
 COPY ./gradle /sources/gradle
@@ -6,9 +7,18 @@ COPY ./gradlew /sources
 COPY ./Havana-Server/ /sources/Havana-Server
 COPY ./settings.gradle /sources
 
-RUN ./gradlew :Havana-Server:shadowJar
+RUN chmod +x ./gradlew && ./gradlew :Havana-Server:shadowJar --no-daemon
 
-FROM eclipse-temurin:25-jre
+# Runtime stage
+FROM eclipse-temurin:17.0.13_11-jre-alpine
+
+# Install dumb-init for proper signal handling and netcat for health checks
+RUN apk add --no-cache dumb-init netcat-openbsd
+
+# Create non-root user
+RUN addgroup -g 1000 havana && \
+    adduser -u 1000 -G havana -s /bin/sh -D havana
+
 WORKDIR /havana-server
 
 # Copy the JAR file from build
@@ -19,6 +29,17 @@ COPY ./tools/figuredata.xml /havana-server/
 
 # Copy entrypoint script
 COPY ./tools/docker/server-entrypoint.sh /havana-server/run.sh
-RUN chmod +x /havana-server/run.sh
+RUN chmod +x /havana-server/run.sh && \
+    chown -R havana:havana /havana-server
 
-ENTRYPOINT ["/havana-server/run.sh"]
+# Switch to non-root user
+USER havana
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD nc -z localhost 12321 || exit 1
+
+EXPOSE 12321 12322 12323
+
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
+CMD ["/havana-server/run.sh"]

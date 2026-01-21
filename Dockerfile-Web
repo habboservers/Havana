@@ -1,4 +1,5 @@
-FROM eclipse-temurin:25-jdk AS builder
+# Build stage
+FROM eclipse-temurin:17.0.13_11-jdk-alpine AS builder
 
 WORKDIR /sources
 COPY ./gradle /sources/gradle
@@ -7,9 +8,18 @@ COPY ./Havana-Server/ /sources/Havana-Server
 COPY ./Havana-Web/ /sources/Havana-Web
 COPY ./settings.gradle /sources
 
-RUN ./gradlew :Havana-Web:shadowJar
+RUN chmod +x ./gradlew && ./gradlew :Havana-Web:shadowJar --no-daemon
 
-FROM eclipse-temurin:25-jre
+# Runtime stage
+FROM eclipse-temurin:17.0.13_11-jre-alpine
+
+# Install dumb-init for proper signal handling and netcat for health checks
+RUN apk add --no-cache dumb-init
+
+# Create non-root user
+RUN addgroup -g 1000 havana && \
+    adduser -u 1000 -G havana -s /bin/sh -D havana
+
 WORKDIR /havana-web
 
 # Copy the JAR file from build
@@ -20,6 +30,17 @@ COPY ./tools/figuredata.xml /havana-web/
 
 # Copy entrypoint script
 COPY ./tools/docker/web-entrypoint.sh /havana-web/run.sh
-RUN chmod +x /havana-web/run.sh
+RUN chmod +x /havana-web/run.sh && \
+    chown -R havana:havana /havana-web
 
-ENTRYPOINT ["/havana-web/run.sh"]
+# Switch to non-root user
+USER havana
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:80/ || exit 1
+
+EXPOSE 80
+
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
+CMD ["/havana-web/run.sh"]

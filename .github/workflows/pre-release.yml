@@ -1,59 +1,71 @@
-name: Create Pre-Release
+name: Release
 
 on:
   push:
     tags:
       - "v[0-9]+.[0-9]+.[0-9]+"
 
+permissions:
+  contents: write
+
 jobs:
-  pre-release:
-    permissions: write-all
-    
-    name: "Pre Release"
-    runs-on: "ubuntu-latest"
+  release:
+    name: Build & Release
+    runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v6
-      - name: Set up JDK 17
-        uses: actions/setup-java@v5
-        with:
-          java-version: 17
-          distribution: 'adopt'
-          cache: gradle
-      - name: Build distribution with Gradle
-        run: ./gradlew build
-        
-      - name: File release preparation
-        run: |
-          sudo mkdir ./Havana
-          sudo mkdir ./Havana/tools
-          sudo mv ./Havana-Server/build/libs/Havana-Server-unspecified.jar ./Havana/Havana-Server.jar
-          sudo mv ./Havana-Web/build/libs/Havana-Web-unspecified.jar ./Havana/Havana-Web.jar
-          sudo cp tools/scripts/run_server.bat ./Havana/
-          sudo cp tools/scripts/run_server.sh ./Havana/
-          sudo cp tools/scripts/run_web.bat ./Havana/
-          sudo cp tools/scripts/run_web.sh ./Havana/
-          sudo cp tools/havana.sql ./Havana/
-          sudo cp tools/figuredata.xml ./Havana/
-          sudo mkdir ./Havana/tools/www
-          sudo mkdir ./Havana/tools/www-tpl
-          sudo mv tools/www-tpl/* ./Havana/tools/www-tpl/
-          sudo cp tools/scripts/README.txt ./Havana/
+      - uses: actions/checkout@v4
 
-      - id: get-tag
-        name: Get tag version
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew build --no-daemon
+
+      - name: Get tag version
+        id: get-tag
         run: echo "tag=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
 
-      - name: Compress release files
-        uses: montudor/action-zip@v1
+      - name: Prepare release files
+        run: |
+          mkdir -p ./Havana/tools/www ./Havana/tools/www-tpl
+
+          # Copy JARs
+          cp ./Havana-Server/build/libs/Havana-Server-*.jar ./Havana/Havana-Server.jar
+          cp ./Havana-Web/build/libs/Havana-Web-*.jar ./Havana/Havana-Web.jar
+
+          # Copy scripts
+          cp tools/scripts/run_server.bat ./Havana/
+          cp tools/scripts/run_server.sh ./Havana/
+          cp tools/scripts/run_web.bat ./Havana/
+          cp tools/scripts/run_web.sh ./Havana/
+          cp tools/scripts/README.txt ./Havana/
+
+          # Copy data files
+          cp tools/havana.sql ./Havana/
+          cp tools/figuredata.xml ./Havana/
+
+          # Copy templates
+          cp -r tools/www-tpl/* ./Havana/tools/www-tpl/ || true
+
+      - name: Create release archive
+        env:
+          TAG_VERSION: ${{ steps.get-tag.outputs.tag }}
+        run: zip -r "Havana-${TAG_VERSION}.zip" ./Havana
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
         with:
-          args: zip -qq -r ./Havana-${{ steps.get-tag.outputs.tag }}.zip ./Havana
-          
-      - uses: "marvinpinto/action-automatic-releases@latest"
-        with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "${{ steps.get-tag.outputs.tag }}"
-          prerelease: true
-          title: "Pre-release ${{ steps.get-tag.outputs.tag }}"
-          files: |
-            Havana-${{ steps.get-tag.outputs.tag }}.zip
+          name: Release ${{ steps.get-tag.outputs.tag }}
+          prerelease: ${{ contains(github.ref, '-rc') || contains(github.ref, '-beta') || contains(github.ref, '-alpha') }}
+          generate_release_notes: true
+          files: Havana-${{ steps.get-tag.outputs.tag }}.zip

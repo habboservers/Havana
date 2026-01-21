@@ -153,7 +153,7 @@ public class GameChess extends GamehallGame {
                 isLegalMove = moveList.contains(move);
 
                 // Add pawn -> promotion
-                if (!isLegalMove && Board.isPromoRank(this.board.getSideToMove(), move)) { // if the move is not legal, check if pawn promotion is legal
+                if (!isLegalMove && isPromotionRank(this.board.getSideToMove(), move)) { // if the move is not legal, check if pawn promotion is legal
                     move = new Move(fromSquare, toSquare, Piece.make(this.board.getSideToMove(), PieceType.QUEEN));
                     isLegalMove = moveList.contains(move);
                 }
@@ -222,6 +222,20 @@ public class GameChess extends GamehallGame {
 
         String[] playerNames = this.getCurrentlyPlaying();
         this.sendToEveryone(new ITEMMSG(new String[]{this.getGameId(), "PIECEDATA", playerNames[0], playerNames[1], boardData.toString()}));
+    }
+
+    /**
+     * Check if a move targets the promotion rank for the given side.
+     * White promotes on rank 8, Black promotes on rank 1.
+     *
+     * @param side the side making the move
+     * @param move the move being made
+     * @return true if the destination square is the promotion rank
+     */
+    private static boolean isPromotionRank(Side side, Move move) {
+        Rank targetRank = move.getTo().getRank();
+        return (side == Side.WHITE && targetRank == Rank.RANK_8) ||
+               (side == Side.BLACK && targetRank == Rank.RANK_1);
     }
 
     /**
