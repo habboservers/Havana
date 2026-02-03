@@ -60,7 +60,7 @@ dependencies {
     implementation group: 'org.bouncycastle', name: 'bcprov-jdk18on', version: '1.83'
 
     implementation 'com.maxmind.geoip2:geoip2:5.0.2'
-    implementation 'com.github.bhlangonijr:chesslib:1.3.4'
+    implementation 'com.github.bhlangonijr:chesslib:1.3.6'
 }
 
 // Configure the shadow jar (fat jar). Defaults to classifier "all".
