@@ -22,7 +22,7 @@ java {
 dependencies {
     // https://mvnrepository.com/artifact/io.pebbletemplates/pebble
     // Note: Pebble 4.x has breaking API changes. Using 3.2.2 for compatibility.
-    implementation group: 'io.pebbletemplates', name: 'pebble', version: '4.1.0'
+    implementation group: 'io.pebbletemplates', name: 'pebble', version: '4.1.1'
 
     // https://mvnrepository.com/artifact/com.zaxxer/HikariCP
     // Note: HikariCP 6+ requires Java 21. Using 5.1.0 for Java 17 compatibility.
@@ -54,13 +54,13 @@ dependencies {
     implementation group: 'org.eclipse.angus', name: 'angus-mail', version: '2.0.5'
 
     // https://mvnrepository.com/artifact/commons-codec/commons-codec
-    implementation group: 'commons-codec', name: 'commons-codec', version: '1.20.0'
+    implementation group: 'commons-codec', name: 'commons-codec', version: '1.21.0'
 
     // https://github.com/Quackster/Kepler/Kepler-Server
     implementation project(':Havana-Server')
 
-    implementation 'com.github.Quackster:Avatara4j:v1.0.2'
-    implementation 'com.github.Quackster:duckHTTPD:v1.0.2'
+    implementation 'com.github.Quackster:Avatara4j:v1.5.4'
+    implementation 'com.github.Quackster:duckHTTPD:v1.5.4'
 }
 
 
